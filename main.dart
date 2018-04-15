@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import './FirstPage.dart' as first;
+import './SecondPage.dart' as second;
+import './ThirdPage.dart' as third;
 
 void main() => runApp(new MyApp());
 
@@ -11,57 +14,54 @@ class MyApp extends StatelessWidget {
       theme: new ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: new HomePage(),
-      routes: <String, WidgetBuilder>
-      {
-        "/SecondPage": (BuildContext context) => new SecondPage() // we have to define it to route to new page, home page is defined automatically
-      },
+      home: new MyTabs(),
     );
   }
 }
 
-class HomePage extends StatelessWidget
+class MyTabs extends StatefulWidget
 {
   @override
-  Widget build(BuildContext context) {
-    return new Scaffold(
-      appBar: new AppBar(title: new Text("Navigation"), backgroundColor: Colors.blueGrey),
-       body: new Container(
-        child: new Center(
-          child: new Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              new IconButton(icon: new Icon(Icons.favorite, color: Colors.blue,),
-                  iconSize: 70.0,
-                  onPressed: (){Navigator.of(context).pushNamed("/SecondPage");}),
-              new Text("Home")
-            ],
-          ),
-        ),
-      ),
-    );
-  }
+  MyTabState createState() => new MyTabState();
 }
 
-class SecondPage extends StatelessWidget
+class MyTabState extends State<MyTabs> with SingleTickerProviderStateMixin
 {
+
+  TabController tabController;
+
+
+  @override
+  void initState() {
+    super.initState();
+    tabController = new TabController(length: 3, vsync: this); // length = no of tabs
+
+  }
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-      appBar: new AppBar(title: new Text("Second Page"), backgroundColor: Colors.blueGrey),
-      body: new Container(
-        child: new Center(
-          child: new Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              new IconButton(icon: new Icon(Icons.gps_fixed, color: Colors.redAccent,),
-                  iconSize: 70.0,
-                  onPressed: null),
-              new Text("Home")
-            ],
-          ),
-        ),
-      ),
+      appBar: new AppBar(
+          title: new Text("Pages"),
+          backgroundColor: Colors.redAccent,
+          bottom: new TabBar(
+              controller: tabController, tabs: <Tab>[
+                new Tab(icon: new Icon(Icons.arrow_drop_down_circle, color: Colors.white,)),
+                new Tab(icon: new Icon(Icons.arrow_drop_down_circle, color: Colors.white)),
+                new Tab(icon: new Icon(Icons.arrow_drop_down_circle, color: Colors.white)),
+          ])),
+      body: new TabBarView(
+        children: <Widget>[
+          new first.First(),
+          new second.Second(),
+          new third.Third()],
+        controller: tabController,),
     );
+  }
+
+  @override
+  void dispose() {
+    tabController.dispose();
+    super.dispose();
   }
 }
